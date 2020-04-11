@@ -22,27 +22,32 @@ tasks = [
 ]
 
 
-@app.route('/todo/api/v1.0/tasks', methods=['GET'])
+# http://localhost:5000/todo/tasks
+@app.route('/todo/tasks', methods=['GET'])
 def get_tasks():
     return jsonify({'tasks': tasks})
 
 
+# http://localhost:5000/
 @app.route('/', methods=['GET'])
 def index():
     return render_template("login.html")
     # return "<h1>Hello Flask</h1>"
 
 
+# http://localhost:5000/admin
 @app.route('/admin')
 def hello_admin():
     return 'Hello Admin'
 
 
+# http://localhost:5000/guest/Pritesh+Patel
 @app.route('/guest/<guest>')
 def hello_guest(guest):
     return 'Hello %s as Guest' % guest
 
 
+# http://localhost:5000/user/Pritesh
 @app.route('/user/<name>')
 def hello_user(name):
     if name == 'admin':
@@ -51,11 +56,13 @@ def hello_user(name):
         return redirect(url_for('hello_guest', guest=name))
 
 
+# http://localhost:5000/success/Pritesh_Patel
 @app.route('/success/<name>')
 def success(name):
     return 'Welcome <B>%s</B>' % name
 
 
+# http://localhost:5000/login
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -66,16 +73,19 @@ def login():
         return redirect(url_for('success', name=user))
 
 
+# http://localhost:5000/hello/Pritesh+Patel
 @app.route('/hello/<user>')
 def hello_name(user):
     return render_template('hello.html', name=user)
 
 
+# http://localhost:5000/student
 @app.route('/student')
 def student():
     return render_template('student.html')
 
 
+# http://localhost:5000/result
 @app.route('/result', methods=['POST', 'GET'])
 def result():
     if request.method == 'POST':
@@ -88,10 +98,20 @@ def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
 
+# http://localhost:5000/books/all
 @app.route('/books/all', methods=['GET'])
 def getAllBooks():
     db = MySqliteDatabase()
     return db.getAll()
+
+
+# http://localhost:5000/books?published=1993
+@app.route('/books', methods=['GET'])
+def api_filter():
+    query_parameters = request.args
+    published = query_parameters.get('published')
+    db = MySqliteDatabase()
+    return db.getBooksByPublishedYear(published)
 
 
 if __name__ == '__main__':

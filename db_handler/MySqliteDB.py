@@ -19,3 +19,29 @@ class MySqliteDatabase:
         for idx, col in enumerate(cursor.description):
             d[col[0]] = row[idx]
         return d
+
+    def getBooksByPublishedYear(self, publishedYear):
+        query = "SELECT * FROM books WHERE"
+        to_filter = []
+
+        # if id:
+        #    query += ' id=? AND'
+        #    to_filter.append(id)
+        if publishedYear:
+            query += ' published=? AND'
+            to_filter.append(publishedYear)
+        # if author:
+        #    query += ' author=? AND'
+        #    to_filter.append(author)
+        # if not (id or published or author):
+        #    return page_not_found(404)
+
+        query = query[:-4] + ';'
+
+        conn = sqlite3.connect('db/books.db')
+        conn.row_factory = self.dict_factory
+        cur = conn.cursor()
+
+        results = cur.execute(query, to_filter).fetchall()
+
+        return jsonify(results)
